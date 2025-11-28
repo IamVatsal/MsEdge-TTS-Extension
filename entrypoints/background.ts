@@ -1,5 +1,7 @@
 import { storage } from "#imports";
 
+let bgAudio: HTMLAudioElement | null = null;
+
 function isChromeWithOffscreen(): boolean {
   return typeof chrome !== 'undefined' &&
          !!chrome.offscreen &&
@@ -111,13 +113,30 @@ export default defineBackground({
         // Firefox MV2 (no offscreen): just play directly here
         if (import.meta.env.FIREFOX) {
           try {
-            const audio = new Audio(message.audioUrl);
-            audio.play().catch(err => {
+            if (bgAudio) {
+              bgAudio.pause();
+            }
+            bgAudio = new Audio(message.audioUrl);
+            bgAudio.play().catch(err => {
               console.error('Firefox: error playing audio in background', err);
             });
           } catch (err) {
             console.error('Firefox: failed to start background audio', err);
           }
+        }
+      }
+
+      // NEW: simple transport controls for Firefox background audio
+       if (import.meta.env.FIREFOX && bgAudio) {
+        if (message.type === 'BG_AUDIO_TOGGLE') {
+          if (bgAudio.paused) {
+            bgAudio.play().catch(err => console.error('Firefox: play failed', err));
+          } else {
+            bgAudio.pause();
+          }
+        } else if (message.type === 'BG_AUDIO_SEEK_REL') {
+          const delta = message.seconds as number;
+          bgAudio.currentTime = Math.max(0, bgAudio.currentTime + delta);
         }
       }
     });

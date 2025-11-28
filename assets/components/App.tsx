@@ -258,6 +258,29 @@ function App() {
                         Play In Background
                     </Button>
                 </Grid>
+                <Grid size={1} container spacing={2} sx={{ mt: 1 }}>
+        <Button
+          variant='outlined'
+          fullWidth
+          onClick={() => browser.runtime.sendMessage({ type: 'BG_AUDIO_SEEK_REL', seconds: -5 })}
+        >
+          -5s
+        </Button>
+        <Button
+          variant='outlined'
+          fullWidth
+          onClick={() => browser.runtime.sendMessage({ type: 'BG_AUDIO_TOGGLE' })}
+        >
+          Play / Pause
+        </Button>
+        <Button
+          variant='outlined'
+          fullWidth
+          onClick={() => browser.runtime.sendMessage({ type: 'BG_AUDIO_SEEK_REL', seconds: 5 })}
+        >
+          +5s
+        </Button>
+      </Grid>
                 <Grid size={1}>
                     <audio src={audioUrl} autoPlay controls style={{ width: '100%' }}></audio>
                 </Grid>
