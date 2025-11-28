@@ -229,7 +229,7 @@ function App() {
                         maxRows={20}
                     />
                 </Grid>
-                <Grid size={1}>
+                <Grid size={1} container spacing={2}>
                     <Button
                         variant='contained'
                         sx={{ padding: '.75rem' }}
@@ -238,6 +238,24 @@ function App() {
                         onClick={handleSubmit}
                     >
                         Generate Audio
+                    </Button>
+                    <Button
+                        variant='contained'
+                        sx={{ padding: '.75rem' }}
+                        disabled={audioLoading || !audioUrl}
+                        fullWidth
+                        onClick={async () =>  {
+                            try{
+                                await browser.runtime.sendMessage({
+                                    type: 'PLAY_TTS_REQUEST',
+                                    audioUrl,
+                                });
+                            } catch (e) {
+                                console.error('Error sending message to background script:', e);
+                            }
+                        }}
+                    >
+                        Play In Background
                     </Button>
                 </Grid>
                 <Grid size={1}>
